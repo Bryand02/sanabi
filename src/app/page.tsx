@@ -4,6 +4,8 @@ import { ArrowRight, PackageCheck, ShieldCheck, Sparkles, Truck } from "lucide-r
 import { ProductCard } from "@/components/store/product-card";
 import { getFeaturedProducts } from "@/lib/data/store";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const featuredProducts = await getFeaturedProducts();
 

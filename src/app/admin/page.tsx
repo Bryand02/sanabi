@@ -4,6 +4,8 @@ import { auth } from "@/lib/auth";
 import { getAdminOverview } from "@/lib/data/store";
 import { formatPrice } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");

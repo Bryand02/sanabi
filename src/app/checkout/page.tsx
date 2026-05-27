@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { CheckoutForm } from "@/components/store/checkout-form";
 import { auth } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 export default async function CheckoutPage() {
   const session = await auth();
   if (!session?.user) {

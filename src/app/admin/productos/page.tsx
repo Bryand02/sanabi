@@ -8,6 +8,8 @@ import { conditionLabels } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminProductsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");

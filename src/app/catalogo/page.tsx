@@ -2,6 +2,8 @@ import { CatalogFilters } from "@/components/store/filters";
 import { ProductCard } from "@/components/store/product-card";
 import { getProducts } from "@/lib/data/store";
 
+export const dynamic = "force-dynamic";
+
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 export default async function CatalogPage({

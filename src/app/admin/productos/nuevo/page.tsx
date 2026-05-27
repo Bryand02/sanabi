@@ -4,6 +4,8 @@ import { ProductForm } from "@/components/admin/product-form";
 import { createProductAction } from "@/lib/actions";
 import { auth } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 export default async function NewProductPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");

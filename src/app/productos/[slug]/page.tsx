@@ -5,6 +5,8 @@ import { conditionLabels } from "@/lib/constants";
 import { getProductBySlug } from "@/lib/data/store";
 import { formatPrice } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 type Params = Promise<{ slug: string }>;
 
 export default async function ProductDetailPage({ params }: { params: Params }) {
