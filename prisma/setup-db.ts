@@ -8,8 +8,13 @@ function resolveSqlitePath(databaseUrl: string) {
     throw new Error("Este proyecto espera una base SQLite con DATABASE_URL empezando por file:");
   }
 
-  const relative = databaseUrl.replace(/^file:/, "");
-  return path.resolve(process.cwd(), "prisma", relative.replace(/^\.\//, ""));
+  const location = databaseUrl.replace(/^file:/, "");
+
+  if (path.isAbsolute(location)) {
+    return location;
+  }
+
+  return path.resolve(process.cwd(), "prisma", location.replace(/^\.\//, ""));
 }
 
 const databaseUrl = process.env.DATABASE_URL ?? "file:./dev.db";

@@ -1,0 +1,23 @@
+services:
+  sanabi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sanabi
+    restart: unless-stopped
+    ports:
+      - "8100:3000"
+    env_file:
+      - .env.docker
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: file:/app/data/dev.db
+      AUTH_URL: http://localhost:8100
+    volumes:
+      - sanabi_data:/app/data
+      - sanabi_uploads:/app/public/uploads
+
+volumes:
+  sanabi_data:
+  sanabi_uploads:

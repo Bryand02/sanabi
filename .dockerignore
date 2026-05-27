@@ -1,0 +1,12 @@
+.git
+.github
+.next
+node_modules
+npm-debug.log*
+sanabi-server.log
+page.html
+.env
+.env.local
+.env.development
+.env.production
+prisma/dev.db

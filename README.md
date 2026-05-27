@@ -44,6 +44,32 @@ npm run dev
 
 5. Abre `http://localhost:3000`.
 
+## Docker en puerto 8100
+
+1. Crea el archivo de entorno Docker:
+
+```bash
+cp .env.docker.example .env.docker
+```
+
+2. Levanta el proyecto:
+
+```bash
+docker compose up -d --build
+```
+
+3. Abre:
+
+```text
+http://TU_SERVIDOR:8100
+```
+
+### Persistencia en Docker
+
+- La base de datos queda en el volumen `sanabi_data`.
+- Las imágenes subidas quedan en el volumen `sanabi_uploads`.
+- El contenedor inicializa la base y carga datos de prueba solo la primera vez.
+
 ## Usuario administrador de prueba
 
 - Correo: `admin@sanabi.co`
@@ -51,7 +77,7 @@ npm run dev
 
 ## Variables de entorno clave
 
-- `DATABASE_URL`: ubicación de SQLite, por defecto `file:./dev.db` dentro de la carpeta `prisma/`.
+- `DATABASE_URL`: local usa `file:./dev.db` dentro de `prisma/`. Docker usa `file:/app/data/dev.db`.
 - `AUTH_SECRET`: secreto para sesiones.
 - `AUTH_URL`: URL base de la app.
 - `SANDBOX_PAYMENT_MODE`: usa `mock` para aprobar pagos en modo demo.

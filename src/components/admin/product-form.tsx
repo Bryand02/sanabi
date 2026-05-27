@@ -24,7 +24,7 @@ export function ProductForm({
   values?: ProductFormValues;
 }) {
   return (
-    <form action={action} className="space-y-6 rounded-[2rem] bg-white p-6 shadow-xl">
+    <form action={action} className="space-y-6 rounded-[2rem] bg-white p-4 shadow-xl sm:p-6">
       <div className="grid gap-4 md:grid-cols-2">
         <div className="md:col-span-2">
           <label className="mb-2 block text-sm font-medium text-slate-700">Nombre</label>
@@ -134,12 +134,14 @@ export function ProductForm({
 
       <ImageUploaderField initialUrls={values?.imageUrls} />
 
-      <button
-        type="submit"
-        className="rounded-full bg-[var(--color-primary-ink)] px-5 py-3 font-semibold text-white"
-      >
-        {submitLabel}
-      </button>
+      <div className="sticky bottom-3 z-10 rounded-[1.5rem] bg-white/95 p-2 backdrop-blur sm:static sm:bg-transparent sm:p-0">
+        <button
+          type="submit"
+          className="min-h-13 w-full rounded-full bg-[var(--color-primary-ink)] px-5 py-3 text-base font-semibold text-white sm:w-auto"
+        >
+          {submitLabel}
+        </button>
+      </div>
     </form>
   );
 }
