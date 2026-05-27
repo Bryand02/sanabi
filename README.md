@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sanabi
 
-## Getting Started
+Sanabi es una tienda online de ropa infantil nueva y de segunda mano construida con `Next.js`, `Prisma`, `SQLite` y `NextAuth`.
 
-First, run the development server:
+## Qué incluye
+
+- Home con identidad visual propia y catálogo responsive.
+- Filtros por talla, categoría, estado y género.
+- Página individual de producto.
+- Carrito persistente en navegador.
+- Registro e inicio de sesión.
+- Checkout con estructura preparada para PSE usando Wompi o Mercado Pago.
+- Confirmación de compra por correo si configuras SMTP.
+- Panel administrativo con CRUD de productos, carga de imágenes y gestión de pedidos.
+- Roles `ADMIN` y `USER`.
+
+## Requisitos
+
+- Node.js 20+.
+- npm 10+.
+
+## Ejecutar localmente
+
+1. Instala dependencias:
+
+```bash
+npm install
+```
+
+2. Crea tu archivo `.env` a partir de `.env.example`.
+
+3. Genera la base y carga datos de prueba:
+
+```bash
+npm run db:push
+npm run db:seed
+```
+
+4. Inicia el proyecto:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Abre `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Usuario administrador de prueba
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Correo: `admin@sanabi.co`
+- Contraseña: `AdminSanabi2026!`
 
-## Learn More
+## Variables de entorno clave
 
-To learn more about Next.js, take a look at the following resources:
+- `DATABASE_URL`: ubicación de SQLite, por defecto `file:./dev.db` dentro de la carpeta `prisma/`.
+- `AUTH_SECRET`: secreto para sesiones.
+- `AUTH_URL`: URL base de la app.
+- `SANDBOX_PAYMENT_MODE`: usa `mock` para aprobar pagos en modo demo.
+- `WOMPI_*`: llaves para integrar Wompi.
+- `MERCADO_PAGO_*`: llaves para integrar Mercado Pago.
+- `SMTP_*`: credenciales de correo.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Notas de integración
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- El checkout ya crea pedidos, pagos y descuenta inventario.
+- Si no configuras Wompi o Mercado Pago, el proyecto usa un modo sandbox funcional.
+- Si no configuras SMTP, la confirmación por correo se registra en consola del servidor.

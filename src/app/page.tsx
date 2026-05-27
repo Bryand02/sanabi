@@ -1,65 +1,97 @@
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, PackageCheck, ShieldCheck, Sparkles, Truck } from "lucide-react";
+import { ProductCard } from "@/components/store/product-card";
+import { getFeaturedProducts } from "@/lib/data/store";
 
-export default function Home() {
+export default async function Home() {
+  const featuredProducts = await getFeaturedProducts();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div>
+      <section className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:py-20">
+        <div className="self-center">
+          <div className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[var(--color-primary-ink)] shadow-lg">
+            <Sparkles className="h-4 w-4 text-[var(--color-primary)]" />
+            Moda infantil con cuidado y ternura
+          </div>
+          <h1 className="mt-6 max-w-2xl font-display text-5xl leading-[1.05] text-[var(--color-primary-ink)] md:text-7xl">
+            Ropita linda para crecer, jugar y volver a querer.
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
+            Sanabi reúne ropa infantil nueva y de segunda mano en excelente estado,
+            con pagos online, envíos a todo Colombia y una experiencia pensada para
+            que mamás, papás y cuidadores compren con confianza.
           </p>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <Link
+              href="/catalogo"
+              className="inline-flex items-center gap-2 rounded-full bg-[var(--color-primary)] px-6 py-4 font-semibold text-white shadow-[0_16px_35px_rgba(240,142,125,0.35)]"
+            >
+              Ver catálogo
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/registro"
+              className="inline-flex items-center gap-2 rounded-full border border-[var(--color-stroke)] bg-white px-6 py-4 font-semibold text-[var(--color-primary-ink)]"
+            >
+              Crear cuenta
+            </Link>
+          </div>
+          <div className="mt-10 grid gap-4 sm:grid-cols-3">
+            <div className="card-soft rounded-[1.75rem] p-4">
+              <ShieldCheck className="h-6 w-6 text-[var(--color-primary)]" />
+              <p className="mt-3 font-semibold text-slate-900">Compra segura</p>
+              <p className="mt-1 text-sm text-slate-600">Roles, autenticación y pago preparado para PSE.</p>
+            </div>
+            <div className="card-soft rounded-[1.75rem] p-4">
+              <Truck className="h-6 w-6 text-[var(--color-primary)]" />
+              <p className="mt-3 font-semibold text-slate-900">Envíos nacionales</p>
+              <p className="mt-1 text-sm text-slate-600">Despachos a todo Colombia con seguimiento del pedido.</p>
+            </div>
+            <div className="card-soft rounded-[1.75rem] p-4">
+              <PackageCheck className="h-6 w-6 text-[var(--color-primary)]" />
+              <p className="mt-3 font-semibold text-slate-900">Curaduría tierna</p>
+              <p className="mt-1 text-sm text-slate-600">Cada prenda se publica con talla, estado y stock real.</p>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+
+        <div className="relative">
+          <div className="absolute inset-0 translate-x-5 translate-y-5 rounded-[3rem] bg-[rgba(255,214,165,0.55)] blur-3xl" />
+          <div className="relative overflow-hidden rounded-[3rem] border border-white/80 bg-white p-5 shadow-[0_28px_70px_rgba(116,146,136,0.22)]">
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+              src="/illustrations/hero-sanabi.svg"
+              alt="Ilustración principal de Sanabi"
+              width={900}
+              height={900}
+              priority
+              className="h-auto w-full rounded-[2.4rem]"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          </div>
         </div>
-      </main>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mb-8 flex items-end justify-between gap-4">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--color-primary)]">
+              Selección destacada
+            </p>
+            <h2 className="mt-2 text-3xl font-semibold text-slate-900">
+              Favoritos para esta temporada
+            </h2>
+          </div>
+          <Link href="/catalogo" className="text-sm font-semibold text-[var(--color-primary-ink)]">
+            Ver todos
+          </Link>
+        </div>
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {featuredProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
