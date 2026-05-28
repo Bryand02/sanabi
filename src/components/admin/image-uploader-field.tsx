@@ -9,6 +9,60 @@ type UploadResponse = {
   error?: string;
 };
 
+const fileAccept =
+  "image/*,.jpg,.jpeg,.png,.webp,.heic,.heif,.avif,.gif,.bmp,.tif,.tiff";
+
+async function fileToNormalizedBlob(file: File) {
+  if (file.type === "image/svg+xml") {
+    return file;
+  }
+
+  const imageUrl = URL.createObjectURL(file);
+
+  try {
+    const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const element = new window.Image();
+      element.onload = () => resolve(element);
+      element.onerror = () => reject(new Error("No se pudo leer la imagen seleccionada."));
+      element.src = imageUrl;
+    });
+
+    const canvas = document.createElement("canvas");
+    const maxSize = 1800;
+    const ratio = Math.min(maxSize / image.width, maxSize / image.height, 1);
+    canvas.width = Math.max(1, Math.round(image.width * ratio));
+    canvas.height = Math.max(1, Math.round(image.height * ratio));
+
+    const context = canvas.getContext("2d");
+    if (!context) {
+      throw new Error("No fue posible preparar la imagen.");
+    }
+
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    const blob = await new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob(
+        (result) => {
+          if (!result) {
+            reject(new Error("No fue posible convertir la imagen."));
+            return;
+          }
+
+          resolve(result);
+        },
+        "image/jpeg",
+        0.92,
+      );
+    });
+
+    const fileName = file.name.replace(/\.[^.]+$/, "") || "imagen";
+
+    return new File([blob], `${fileName}.jpg`, { type: "image/jpeg" });
+  } finally {
+    URL.revokeObjectURL(imageUrl);
+  }
+}
+
 export function ImageUploaderField({ initialUrls = [] }: { initialUrls?: string[] }) {
   const [urls, setUrls] = useState(initialUrls);
   const [isUploading, setIsUploading] = useState(false);
@@ -24,24 +78,37 @@ export function ImageUploaderField({ initialUrls = [] }: { initialUrls?: string[
     setIsUploading(true);
     setError(null);
 
-    const uploadForm = new FormData();
-    Array.from(fileList).forEach((file) => uploadForm.append("files", file));
+    try {
+      const normalizedFiles = await Promise.all(
+        Array.from(fileList).map((file) => fileToNormalizedBlob(file)),
+      );
 
-    const response = await fetch("/api/upload", {
-      method: "POST",
-      body: uploadForm,
-    });
+      const uploadForm = new FormData();
+      normalizedFiles.forEach((file) => uploadForm.append("files", file));
 
-    const data = (await response.json()) as UploadResponse;
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: uploadForm,
+      });
 
-    if (!response.ok || !data.urls) {
-      setError(data.error ?? "No fue posible subir las imágenes.");
+      const data = (await response.json()) as UploadResponse;
+
+      if (!response.ok || !data.urls) {
+        setError(data.error ?? "No fue posible subir las imágenes.");
+        setIsUploading(false);
+        return;
+      }
+
+      setUrls((current) => [...current, ...(data.urls ?? [])]);
       setIsUploading(false);
-      return;
+    } catch (uploadError) {
+      setError(
+        uploadError instanceof Error
+          ? uploadError.message
+          : "No fue posible preparar las imágenes para subir.",
+      );
+      setIsUploading(false);
     }
-
-    setUrls((current) => [...current, ...(data.urls ?? [])]);
-    setIsUploading(false);
   }
 
   function removeUrl(index: number) {
@@ -104,7 +171,7 @@ export function ImageUploaderField({ initialUrls = [] }: { initialUrls?: string[
           ref={galleryInputRef}
           type="file"
           multiple
-          accept="image/png,image/jpeg,image/webp,image/svg+xml"
+          accept={fileAccept}
           className="hidden"
           onChange={async (event) => {
             await uploadFiles(event.target.files);
@@ -115,7 +182,7 @@ export function ImageUploaderField({ initialUrls = [] }: { initialUrls?: string[
         <input
           ref={cameraInputRef}
           type="file"
-          accept="image/png,image/jpeg,image/webp"
+          accept={fileAccept}
           capture="environment"
           className="hidden"
           onChange={async (event) => {
@@ -152,12 +219,7 @@ export function ImageUploaderField({ initialUrls = [] }: { initialUrls?: string[
                 className="overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white shadow-sm"
               >
                 <div className="relative aspect-[4/5] bg-slate-100">
-                  <Image
-                    src={url}
-                    alt={`Imagen ${index + 1}`}
-                    fill
-                    className="object-cover"
-                  />
+                  <Image src={url} alt={`Imagen ${index + 1}`} fill className="object-cover" />
                   <div className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-800">
                     {index === 0 ? "Portada" : `Foto ${index + 1}`}
                   </div>
@@ -205,8 +267,9 @@ export function ImageUploaderField({ initialUrls = [] }: { initialUrls?: string[
         <div className="flex items-start gap-3">
           <Grip className="mt-0.5 h-4 w-4 shrink-0" />
           <p>
-            En celular puedes tocar <strong>Abrir cámara</strong> para tomar la foto en el momento.
-            En computador o móvil también puedes usar <strong>Subir desde galería</strong>.
+            En celular puedes tocar <strong>Abrir cámara</strong> para tomar la foto en el
+            momento. El sistema convertirá la imagen a un formato compatible antes de
+            guardarla.
           </p>
         </div>
       </div>
