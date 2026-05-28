@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { signIn, signOut } from "@/lib/auth";
 import { sendOrderConfirmationEmail } from "@/lib/email/send-order-confirmation";
+import { createAdminOrderNotifications } from "@/lib/notifications";
 import { createPaymentSession } from "@/lib/payments";
 import { prisma } from "@/lib/prisma";
 import { cleanupUnusedUploadUrls, prepareProductImagesForDatabase } from "@/lib/uploads";
@@ -444,8 +445,16 @@ export async function createOrderAction(input: unknown, userId: string) {
     })),
   });
 
+  await createAdminOrderNotifications({
+    orderNumber: order.orderNumber,
+    customerName: order.shippingName,
+    total: order.total,
+  });
+
   revalidatePath("/catalogo");
   revalidatePath("/cuenta/pedidos");
+  revalidatePath("/admin");
+  revalidatePath("/admin/pedidos");
 
   return { success: true, orderNumber: order.orderNumber };
 }

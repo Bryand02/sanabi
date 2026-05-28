@@ -44,6 +44,8 @@ model User {
   orders       Order[]
   accounts     Account[]
   sessions     Session[]
+  pushSubscriptions PushSubscription[]
+  notifications     AdminNotification[]
 }
 
 model UploadAsset {
@@ -52,6 +54,29 @@ model UploadAsset {
   fileName  String?
   data      Bytes
   createdAt DateTime @default(now())
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AdminNotification {
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+  href      String?
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Product {

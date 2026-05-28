@@ -48,27 +48,29 @@ export const productSizes = [
 
 export const productGenders = ["Niña", "Niño", "Unisex"];
 
-export const colombiaLocations = [
-  { state: "Antioquia", city: "Medellín" },
-  { state: "Atlántico", city: "Barranquilla" },
-  { state: "Bogotá D.C.", city: "Bogotá" },
-  { state: "Bolívar", city: "Cartagena" },
-  { state: "Boyacá", city: "Tunja" },
-  { state: "Caldas", city: "Manizales" },
-  { state: "Cauca", city: "Popayán" },
-  { state: "Cesar", city: "Valledupar" },
-  { state: "Cundinamarca", city: "Soacha" },
-  { state: "Huila", city: "Neiva" },
-  { state: "Magdalena", city: "Santa Marta" },
-  { state: "Meta", city: "Villavicencio" },
-  { state: "Nariño", city: "Pasto" },
-  { state: "Norte de Santander", city: "Cúcuta" },
-  { state: "Quindío", city: "Armenia" },
-  { state: "Risaralda", city: "Pereira" },
-  { state: "Santander", city: "Bucaramanga" },
-  { state: "Tolima", city: "Ibagué" },
-  { state: "Valle del Cauca", city: "Cali" },
-];
+export const colombiaLocationsByState = {
+  Antioquia: ["Medellín", "Envigado", "Itagüí", "Bello", "Rionegro"],
+  Atlántico: ["Barranquilla", "Soledad", "Puerto Colombia"],
+  "Bogotá D.C.": ["Bogotá"],
+  Bolívar: ["Cartagena", "Turbaco", "Magangué"],
+  Boyacá: ["Tunja", "Duitama", "Sogamoso"],
+  Caldas: ["Manizales", "Villamaría", "La Dorada"],
+  Cauca: ["Popayán", "Santander de Quilichao"],
+  Cesar: ["Valledupar", "Aguachica"],
+  Cundinamarca: ["Soacha", "Chía", "Zipaquirá", "Facatativá", "Mosquera"],
+  Huila: ["Neiva", "Pitalito"],
+  Magdalena: ["Santa Marta", "Ciénaga"],
+  Meta: ["Villavicencio", "Acacías"],
+  Nariño: ["Pasto", "Ipiales"],
+  "Norte de Santander": ["Cúcuta", "Ocaña"],
+  Quindío: ["Armenia", "Calarcá"],
+  Risaralda: ["Pereira", "Dosquebradas", "Santa Rosa de Cabal"],
+  Santander: ["Bucaramanga", "Floridablanca", "Girón"],
+  Tolima: ["Ibagué", "Espinal"],
+  "Valle del Cauca": ["Cali", "Palmira", "Buenaventura"],
+} as const;
+
+export const colombiaDepartments = Object.keys(colombiaLocationsByState);
 
 export const paymentOptions = [
   {

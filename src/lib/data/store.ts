@@ -72,3 +72,21 @@ export async function getAdminOverview() {
     revenue: revenue._sum.total ?? 0,
   };
 }
+
+export async function getAdminNotificationCenter(userId: string) {
+  const [notifications, unreadCount] = await Promise.all([
+    prisma.adminNotification.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      take: 8,
+    }),
+    prisma.adminNotification.count({
+      where: { userId, readAt: null },
+    }),
+  ]);
+
+  return {
+    notifications,
+    unreadCount,
+  };
+}

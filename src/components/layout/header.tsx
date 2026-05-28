@@ -2,13 +2,29 @@ import Link from "next/link";
 import { HeartHandshake, LayoutDashboard, ShoppingBag } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { LogoutButton } from "@/components/auth/logout-button";
+import { AdminNotificationCenter } from "@/components/admin/admin-notification-center";
 import { CartBadge } from "@/components/cart/cart-badge";
 import { MobileMenu } from "@/components/layout/mobile-menu";
+import { getAdminNotificationCenter } from "@/lib/data/store";
+import { getPublicVapidKey } from "@/lib/notifications";
+
+type NotificationCenterItem = {
+  id: string;
+  title: string;
+  body: string;
+  href: string | null;
+  readAt: Date | null;
+  createdAt: Date;
+};
 
 export async function Header() {
   const session = await auth();
   const isAdmin = session?.user.role === "ADMIN";
   const firstName = session?.user.name?.split(" ")[0] ?? "Mi cuenta";
+  const notificationCenter =
+    isAdmin && session?.user.id
+      ? await getAdminNotificationCenter(session.user.id)
+      : null;
 
   return (
     <header className="sticky top-0 z-30 border-b border-white/70 bg-white/85 backdrop-blur-xl">
@@ -40,6 +56,21 @@ export async function Header() {
         </nav>
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          {isAdmin && notificationCenter ? (
+            <AdminNotificationCenter
+              initialNotifications={notificationCenter.notifications.map((notification: NotificationCenterItem) => ({
+                id: notification.id,
+                title: notification.title,
+                body: notification.body,
+                href: notification.href,
+                readAt: notification.readAt?.toISOString() ?? null,
+                createdAt: notification.createdAt.toISOString(),
+              }))}
+              initialUnreadCount={notificationCenter.unreadCount}
+              vapidPublicKey={getPublicVapidKey()}
+            />
+          ) : null}
+
           <CartBadge />
 
           {session?.user ? (

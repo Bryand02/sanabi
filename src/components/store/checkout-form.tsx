@@ -1,19 +1,41 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { useCart } from "@/components/cart/cart-provider";
-import { colombiaLocations, paymentOptions } from "@/lib/constants";
+import { colombiaDepartments, colombiaLocationsByState, paymentOptions } from "@/lib/constants";
 import { createOrderAction } from "@/lib/actions";
 import { formatPrice } from "@/lib/utils";
 
-export function CheckoutForm({ userId, email, name }: { userId: string; email?: string | null; name?: string | null }) {
+export function CheckoutForm({
+  userId,
+  email,
+  name,
+}: {
+  userId: string;
+  email?: string | null;
+  name?: string | null;
+}) {
   const router = useRouter();
   const { items, clearCart, totalPrice } = useCart();
   const [error, setError] = useState<string | null>(null);
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [shippingState, setShippingState] = useState("");
+  const [shippingCity, setShippingCity] = useState("");
   const shipping = totalPrice >= 150000 || totalPrice === 0 ? 0 : 12000;
+
+  const availableCities = useMemo(
+    (): string[] =>
+      shippingState
+        ? Array.from(
+            colombiaLocationsByState[
+              shippingState as keyof typeof colombiaLocationsByState
+            ],
+          )
+        : [],
+    [shippingState],
+  );
 
   return (
     <form
@@ -108,10 +130,15 @@ export function CheckoutForm({ userId, email, name }: { userId: string; email?: 
             <select
               name="shippingState"
               required
+              value={shippingState}
+              onChange={(event) => {
+                setShippingState(event.target.value);
+                setShippingCity("");
+              }}
               className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
             >
               <option value="">Selecciona</option>
-              {[...new Set(colombiaLocations.map((item) => item.state))].map((state) => (
+              {colombiaDepartments.map((state) => (
                 <option key={state} value={state}>
                   {state}
                 </option>
@@ -123,12 +150,15 @@ export function CheckoutForm({ userId, email, name }: { userId: string; email?: 
             <select
               name="shippingCity"
               required
-              className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none"
+              value={shippingCity}
+              onChange={(event) => setShippingCity(event.target.value)}
+              disabled={!shippingState}
+              className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none disabled:bg-slate-50"
             >
               <option value="">Selecciona</option>
-              {colombiaLocations.map((location) => (
-                <option key={`${location.state}-${location.city}`} value={location.city}>
-                  {location.city}
+              {availableCities.map((city) => (
+                <option key={`${shippingState}-${city}`} value={city}>
+                  {city}
                 </option>
               ))}
             </select>

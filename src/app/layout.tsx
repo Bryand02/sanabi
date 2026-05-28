@@ -5,6 +5,7 @@ import { AuthProvider } from "@/components/auth/auth-provider";
 import { CartProvider } from "@/components/cart/cart-provider";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { PwaRegistrar } from "@/components/pwa/pwa-registrar";
 
 const bodyFont = Plus_Jakarta_Sans({
   variable: "--font-body",
@@ -20,6 +21,7 @@ export const metadata: Metadata = {
   title: "Sanabi Kids | Tienda online de moda infantil",
   description:
     "Sanabi Kids es una tienda online de moda infantil nueva y de segunda mano con pagos, envíos y panel administrativo.",
+  manifest: "/manifest.webmanifest",
 };
 
 export default function RootLayout({
@@ -35,6 +37,7 @@ export default function RootLayout({
       <body className="brand-grid min-h-full bg-[var(--color-shell)] text-slate-900">
         <AuthProvider>
           <CartProvider>
+            <PwaRegistrar />
             <div className="relative flex min-h-screen flex-col overflow-hidden">
               <div className="pointer-events-none absolute inset-0 -z-10 brand-dots opacity-50" />
               <Header />
