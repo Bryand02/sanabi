@@ -1,3 +1,5 @@
+import { appVersion } from "@/lib/constants";
+
 export function Footer() {
   return (
     <footer className="border-t border-[rgba(255,255,255,0.7)] bg-white/80">
@@ -19,6 +21,9 @@ export function Footer() {
             Estructura lista para integrar PSE con Wompi o Mercado Pago.
           </p>
         </div>
+      </div>
+      <div className="mx-auto max-w-7xl px-4 pb-6 text-[11px] tracking-[0.12em] text-slate-400 sm:px-6 lg:px-8">
+        Versión {appVersion}
       </div>
     </footer>
   );
