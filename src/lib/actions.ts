@@ -4,6 +4,7 @@ import { PaymentStatus, ProductCondition, Role } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { AuthError } from "next-auth";
 import { signIn, signOut } from "@/lib/auth";
 import { sendOrderConfirmationEmail } from "@/lib/email/send-order-confirmation";
 import { createAdminOrderNotifications } from "@/lib/notifications";
@@ -45,11 +46,21 @@ export async function registerUserAction(formData: FormData) {
     },
   });
 
-  await signIn("credentials", {
-    email: parsed.data.email.toLowerCase(),
-    password: parsed.data.password,
-    redirectTo: "/catalogo",
-  });
+  try {
+    await signIn("credentials", {
+      email: parsed.data.email.toLowerCase(),
+      password: parsed.data.password,
+      redirect: false,
+    });
+  } catch (error) {
+    if (error instanceof AuthError) {
+      return { error: "No fue posible iniciar sesión con la cuenta creada." };
+    }
+
+    throw error;
+  }
+
+  redirect("/catalogo");
 }
 
 export async function loginUserAction(formData: FormData) {
@@ -66,15 +77,22 @@ export async function loginUserAction(formData: FormData) {
     await signIn("credentials", {
       email: parsed.data.email.toLowerCase(),
       password: parsed.data.password,
-      redirectTo: "/catalogo",
+      redirect: false,
     });
-  } catch {
-    return { error: "Correo o contraseña incorrectos." };
+  } catch (error) {
+    if (error instanceof AuthError) {
+      return { error: "Correo o contraseña incorrectos." };
+    }
+
+    throw error;
   }
+
+  redirect("/catalogo");
 }
 
 export async function logoutAction() {
-  await signOut({ redirectTo: "/" });
+  await signOut({ redirect: false });
+  redirect("/");
 }
 
 function extractImageUrls(formData: FormData) {
