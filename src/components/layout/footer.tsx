@@ -3,10 +3,10 @@ export function Footer() {
     <footer className="border-t border-[rgba(255,255,255,0.7)] bg-white/80">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 text-sm text-slate-600 sm:px-6 lg:grid-cols-3 lg:px-8">
         <div>
-          <p className="font-display text-2xl text-[var(--color-primary-ink)]">Sanabi</p>
+          <p className="font-display text-2xl text-[var(--color-primary-ink)]">Sanabi Kids</p>
           <p className="mt-3 max-w-sm">
-            Tienda online de ropa infantil nueva y de segunda mano, pensada para
-            familias que buscan estilo, cuidado y confianza.
+            Moda infantil nueva y de segunda mano para familias que buscan diseño,
+            calidad y una experiencia de compra clara.
           </p>
         </div>
         <div>

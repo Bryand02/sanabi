@@ -46,7 +46,7 @@ export function MobileMenu({ isLoggedIn, isAdmin, userLabel }: Props) {
               Cuenta
             </p>
             <p className="mt-1 text-base font-semibold text-[var(--color-primary-ink)]">
-              {isLoggedIn ? userLabel : "Explora Sanabi"}
+              {isLoggedIn ? userLabel : "Explora Sanabi Kids"}
             </p>
           </div>
 

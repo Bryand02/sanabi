@@ -1,15 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fffdf8;
-  --foreground: #233239;
-  --color-shell: #fffaf6;
-  --color-primary: #f08e7d;
-  --color-primary-ink: #314d56;
-  --color-cloud: #edf7f4;
-  --color-accent: #ffd6a5;
-  --color-accent-soft: #fff0d8;
-  --color-stroke: #e5ece7;
+  --background: #fffdf9;
+  --foreground: #1f2940;
+  --color-shell: #fffaf4;
+  --color-primary: #ff8f7d;
+  --color-primary-strong: #ff6f61;
+  --color-primary-ink: #2d4a63;
+  --color-cloud: #eef8f4;
+  --color-accent: #ffd37d;
+  --color-accent-soft: #fff0c9;
+  --color-sky: #dff2ff;
+  --color-mint: #dff4e8;
+  --color-lilac: #ebe5ff;
+  --color-stroke: #dde8ee;
 }
 
 @theme inline {
@@ -59,11 +63,24 @@ textarea {
 }
 
 ::selection {
-  background: rgba(240, 142, 125, 0.2);
+  background: rgba(255, 143, 125, 0.24);
 }
 
 .card-soft {
   border: 1px solid rgba(255, 255, 255, 0.8);
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 24px 60px rgba(157, 181, 170, 0.18);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 24px 60px rgba(98, 132, 159, 0.16);
+}
+
+.brand-grid {
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255, 211, 125, 0.22), transparent 22%),
+    radial-gradient(circle at 80% 10%, rgba(223, 242, 255, 0.28), transparent 20%),
+    radial-gradient(circle at 70% 80%, rgba(235, 229, 255, 0.24), transparent 18%),
+    linear-gradient(180deg, #fffaf4 0%, #fffefe 52%, #f7fbff 100%);
+}
+
+.brand-dots {
+  background-image: radial-gradient(rgba(45, 74, 99, 0.08) 1px, transparent 1px);
+  background-size: 18px 18px;
 }

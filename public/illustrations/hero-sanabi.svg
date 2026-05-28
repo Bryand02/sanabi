@@ -1,20 +1,24 @@
 <svg width="1200" height="1000" viewBox="0 0 1200 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="1000" rx="64" fill="#FFF7F0"/>
-  <circle cx="230" cy="220" r="110" fill="#FEE2C4"/>
-  <circle cx="968" cy="224" r="88" fill="#DDF1EB"/>
-  <circle cx="960" cy="760" r="112" fill="#FFEACB"/>
+  <rect width="1200" height="1000" rx="64" fill="#FFF9F4"/>
+  <circle cx="230" cy="220" r="110" fill="#FFE4C7"/>
+  <circle cx="968" cy="224" r="88" fill="#DDF3F7"/>
+  <circle cx="960" cy="760" r="112" fill="#F9E3FF"/>
+  <circle cx="140" cy="760" r="64" fill="#EAF8D9"/>
   <path d="M227 715C227 608.961 312.961 523 419 523H781C887.039 523 973 608.961 973 715V788C973 850.408 922.408 901 860 901H340C277.592 901 227 850.408 227 788V715Z" fill="#FFFFFF"/>
   <path d="M334 357C334 263.149 410.149 187 504 187H696C789.851 187 866 263.149 866 357V549H334V357Z" fill="#EAF7F3"/>
-  <path d="M422 304C422 260.922 456.922 226 500 226H700C743.078 226 778 260.922 778 304V549H422V304Z" fill="#F7A08C"/>
-  <rect x="454" y="257" width="292" height="229" rx="48" fill="#FFF2E7"/>
-  <path d="M501 552H699V784C699 818.242 671.242 846 637 846H563C528.758 846 501 818.242 501 784V552Z" fill="#FFD8A9"/>
-  <path d="M364 403C364 383.118 380.118 367 400 367H460V531H400C380.118 531 364 514.882 364 495V403Z" fill="#FFD8A9"/>
-  <path d="M836 403C836 383.118 819.882 367 800 367H740V531H800C819.882 531 836 514.882 836 495V403Z" fill="#FFD8A9"/>
-  <circle cx="552" cy="378" r="18" fill="#314D56"/>
-  <circle cx="648" cy="378" r="18" fill="#314D56"/>
-  <path d="M548 441C581.033 466.66 619.482 466.66 652.515 441" stroke="#314D56" stroke-width="16" stroke-linecap="round"/>
-  <path d="M470 152C518 116 682 112 746 154" stroke="#314D56" stroke-width="18" stroke-linecap="round"/>
-  <path d="M310 638C362.917 639.469 419.156 672.41 460 719" stroke="#D7A86E" stroke-width="18" stroke-linecap="round"/>
-  <path d="M890 631C837.083 632.469 780.844 665.41 740 712" stroke="#B8D5CB" stroke-width="18" stroke-linecap="round"/>
-  <text x="600" y="112" text-anchor="middle" fill="#314D56" font-size="54" font-family="Arial, sans-serif" font-weight="700">Sanabi</text>
+  <path d="M422 304C422 260.922 456.922 226 500 226H700C743.078 226 778 260.922 778 304V549H422V304Z" fill="#FF9B88"/>
+  <rect x="454" y="257" width="292" height="229" rx="48" fill="#FFF3EA"/>
+  <path d="M501 552H699V784C699 818.242 671.242 846 637 846H563C528.758 846 501 818.242 501 784V552Z" fill="#FFD9A6"/>
+  <path d="M364 403C364 383.118 380.118 367 400 367H460V531H400C380.118 531 364 514.882 364 495V403Z" fill="#FFD9A6"/>
+  <path d="M836 403C836 383.118 819.882 367 800 367H740V531H800C819.882 531 836 514.882 836 495V403Z" fill="#FFD9A6"/>
+  <circle cx="552" cy="378" r="18" fill="#2D4A63"/>
+  <circle cx="648" cy="378" r="18" fill="#2D4A63"/>
+  <path d="M548 441C581.033 466.66 619.482 466.66 652.515 441" stroke="#2D4A63" stroke-width="16" stroke-linecap="round"/>
+  <path d="M470 152C518 116 682 112 746 154" stroke="#2D4A63" stroke-width="18" stroke-linecap="round"/>
+  <path d="M310 638C362.917 639.469 419.156 672.41 460 719" stroke="#F3B374" stroke-width="18" stroke-linecap="round"/>
+  <path d="M890 631C837.083 632.469 780.844 665.41 740 712" stroke="#98CDD3" stroke-width="18" stroke-linecap="round"/>
+  <circle cx="260" cy="320" r="12" fill="#FF9B88"/>
+  <circle cx="916" cy="340" r="12" fill="#98CDD3"/>
+  <circle cx="888" cy="780" r="10" fill="#C7A7F5"/>
+  <text x="600" y="112" text-anchor="middle" fill="#2D4A63" font-size="54" font-family="Arial, sans-serif" font-weight="700">Sanabi Kids</text>
 </svg>

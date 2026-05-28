@@ -17,9 +17,9 @@ const displayFont = Baloo_2({
 });
 
 export const metadata: Metadata = {
-  title: "Sanabi | Tienda online de ropa infantil",
+  title: "Sanabi Kids | Tienda online de moda infantil",
   description:
-    "Sanabi es una tienda online de ropa infantil nueva y de segunda mano con pagos, envíos y panel administrativo.",
+    "Sanabi Kids es una tienda online de moda infantil nueva y de segunda mano con pagos, envíos y panel administrativo.",
 };
 
 export default function RootLayout({
@@ -32,11 +32,11 @@ export default function RootLayout({
       lang="es"
       className={`${bodyFont.variable} ${displayFont.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-[var(--color-shell)] text-slate-900">
+      <body className="brand-grid min-h-full bg-[var(--color-shell)] text-slate-900">
         <AuthProvider>
           <CartProvider>
             <div className="relative flex min-h-screen flex-col overflow-hidden">
-              <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,_rgba(255,233,218,0.9),_transparent_30%),radial-gradient(circle_at_top_right,_rgba(217,238,234,0.9),_transparent_28%),linear-gradient(180deg,_#fffaf7_0%,_#f9fbff_50%,_#fffef8_100%)]" />
+              <div className="pointer-events-none absolute inset-0 -z-10 brand-dots opacity-50" />
               <Header />
               <main className="flex-1">{children}</main>
               <Footer />

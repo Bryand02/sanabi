@@ -1,6 +1,6 @@
-# Sanabi
+# Sanabi Kids
 
-Sanabi es una tienda online de ropa infantil nueva y de segunda mano construida con `Next.js`, `Prisma`, `SQLite` y `NextAuth`.
+Sanabi Kids es una tienda online de moda infantil nueva y de segunda mano construida con `Next.js`, `Prisma`, `SQLite` y `NextAuth`.
 
 ## Qué incluye
 

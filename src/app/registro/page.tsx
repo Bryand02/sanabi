@@ -21,7 +21,7 @@ export default async function RegisterPage() {
           Regístrate para comprar, pagar en línea y ver el estado de tus pedidos.
         </h1>
         <p className="mt-4 text-slate-600">
-          Sanabi fue pensada para dar confianza a las familias desde el primer clic.
+          Sanabi Kids fue creada para dar confianza a las familias desde el primer clic.
         </p>
         <Link href="/login" className="mt-6 inline-flex font-semibold text-[var(--color-primary-ink)]">
           Ya tengo una cuenta

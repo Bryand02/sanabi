@@ -20,7 +20,7 @@ export async function sendOrderConfirmationEmail(params: Params) {
   const port = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : undefined;
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
-  const from = process.env.EMAIL_FROM ?? "Sanabi <no-reply@sanabi.local>";
+  const from = process.env.EMAIL_FROM ?? "Sanabi Kids <no-reply@sanabi.local>";
 
   if (!host || !port || !user || !pass) {
     console.log("Email de confirmacion omitido. Falta configuracion SMTP.", params);
@@ -37,7 +37,7 @@ export async function sendOrderConfirmationEmail(params: Params) {
   await transporter.sendMail({
     from,
     to: params.to,
-    subject: `Confirmacion de compra ${params.orderNumber} - Sanabi`,
+    subject: `Confirmacion de compra ${params.orderNumber} - Sanabi Kids`,
     html: `
       <div style="font-family: Arial, sans-serif; color: #2e3b35;">
         <h2>Gracias por tu compra, ${params.name}</h2>

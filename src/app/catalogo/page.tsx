@@ -25,10 +25,10 @@ export default async function CatalogPage({
     <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       <div className="mb-8">
         <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--color-primary)]">
-          Catálogo Sanabi
+          Catálogo Sanabi Kids
         </p>
         <h1 className="mt-2 text-4xl font-semibold text-slate-900">
-          Ropa infantil nueva y de segunda mano
+          Moda infantil nueva y de segunda mano
         </h1>
       </div>
       <CatalogFilters selected={filters} />
@@ -40,7 +40,7 @@ export default async function CatalogPage({
       {products.length === 0 ? (
         <div className="mt-10 rounded-[2rem] bg-white p-8 text-center shadow-xl">
           <p className="text-lg font-semibold text-slate-900">
-            No encontramos prendas con esos filtros.
+            No encontramos productos con esos filtros.
           </p>
         </div>
       ) : null}

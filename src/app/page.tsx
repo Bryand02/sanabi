@@ -15,15 +15,15 @@ export default async function Home() {
         <div className="self-center">
           <div className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[var(--color-primary-ink)] shadow-lg">
             <Sparkles className="h-4 w-4 text-[var(--color-primary)]" />
-            Moda infantil con cuidado y ternura
+            Sanabi Kids · moda infantil con identidad
           </div>
           <h1 className="mt-6 max-w-2xl font-display text-5xl leading-[1.05] text-[var(--color-primary-ink)] md:text-7xl">
-            Ropita linda para crecer, jugar y volver a querer.
+            Estilo infantil para crecer, explorar y expresarse.
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
-            Sanabi reúne ropa infantil nueva y de segunda mano en excelente estado,
-            con pagos online, envíos a todo Colombia y una experiencia pensada para
-            que mamás, papás y cuidadores compren con confianza.
+            Sanabi Kids reúne moda infantil nueva y de segunda mano en excelente estado,
+            con pagos online, envíos a todo Colombia y una experiencia pensada para que
+            familias y cuidadores compren con confianza.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <Link
@@ -53,8 +53,8 @@ export default async function Home() {
             </div>
             <div className="card-soft rounded-[1.75rem] p-4">
               <PackageCheck className="h-6 w-6 text-[var(--color-primary)]" />
-              <p className="mt-3 font-semibold text-slate-900">Curaduría tierna</p>
-              <p className="mt-1 text-sm text-slate-600">Cada prenda se publica con talla, estado y stock real.</p>
+              <p className="mt-3 font-semibold text-slate-900">Selección cuidada</p>
+              <p className="mt-1 text-sm text-slate-600">Cada producto se publica con talla, estado y stock real.</p>
             </div>
           </div>
         </div>
@@ -64,7 +64,7 @@ export default async function Home() {
           <div className="relative overflow-hidden rounded-[3rem] border border-white/80 bg-white p-5 shadow-[0_28px_70px_rgba(116,146,136,0.22)]">
             <Image
               src="/illustrations/hero-sanabi.svg"
-              alt="Ilustración principal de Sanabi"
+              alt="Ilustración principal de Sanabi Kids"
               width={900}
               height={900}
               priority
@@ -81,7 +81,7 @@ export default async function Home() {
               Selección destacada
             </p>
             <h2 className="mt-2 text-3xl font-semibold text-slate-900">
-              Favoritos para esta temporada
+              Favoritos de la semana
             </h2>
           </div>
           <Link href="/catalogo" className="text-sm font-semibold text-[var(--color-primary-ink)]">

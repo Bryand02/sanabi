@@ -14,15 +14,15 @@ export async function Header() {
     <header className="sticky top-0 z-30 border-b border-white/70 bg-white/85 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="min-w-0 flex items-center gap-3">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-accent)] shadow-[0_12px_30px_rgba(255,193,139,0.35)]">
+          <div className="flex h-13 w-13 shrink-0 items-center justify-center rounded-[1.35rem] bg-[linear-gradient(180deg,var(--color-accent),#ffc29c)] shadow-[0_12px_30px_rgba(255,193,139,0.4)]">
             <HeartHandshake className="h-6 w-6 text-[var(--color-primary-ink)]" />
           </div>
           <div className="min-w-0">
-            <p className="truncate font-display text-2xl text-[var(--color-primary-ink)]">
-              Sanabi
+            <p className="truncate font-display text-2xl tracking-[0.01em] text-[var(--color-primary-ink)]">
+              Sanabi Kids
             </p>
-            <p className="line-clamp-2 text-xs text-slate-500">
-              Ropita tierna, segura y con historia
+            <p className="line-clamp-2 text-xs font-medium text-slate-500">
+              Moda infantil con identidad, color y confianza
             </p>
           </div>
         </Link>
