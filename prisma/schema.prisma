@@ -46,6 +46,14 @@ model User {
   sessions     Session[]
 }
 
+model UploadAsset {
+  id        String   @id @default(cuid())
+  mimeType  String
+  fileName  String?
+  data      Bytes
+  createdAt DateTime @default(now())
+}
+
 model Product {
   id          String            @id @default(cuid())
   name        String
@@ -69,6 +77,9 @@ model ProductImage {
   url       String
   alt       String?
   position  Int      @default(0)
+  mimeType  String?
+  fileName  String?
+  data      Bytes?
   productId String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }

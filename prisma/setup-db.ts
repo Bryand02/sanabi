@@ -39,6 +39,14 @@ db.exec(`
 
   CREATE UNIQUE INDEX IF NOT EXISTS "User_email_key" ON "User"("email");
 
+  CREATE TABLE IF NOT EXISTS "UploadAsset" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "mimeType" TEXT NOT NULL,
+    "fileName" TEXT,
+    "data" BLOB NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+  );
+
   CREATE TABLE IF NOT EXISTS "Product" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
@@ -62,6 +70,9 @@ db.exec(`
     "url" TEXT NOT NULL,
     "alt" TEXT,
     "position" INTEGER NOT NULL DEFAULT 0,
+    "mimeType" TEXT,
+    "fileName" TEXT,
+    "data" BLOB,
     "productId" TEXT NOT NULL,
     CONSTRAINT "ProductImage_productId_fkey"
       FOREIGN KEY ("productId") REFERENCES "Product" ("id") ON DELETE CASCADE ON UPDATE CASCADE
@@ -166,6 +177,22 @@ db.exec(`
   CREATE UNIQUE INDEX IF NOT EXISTS "VerificationToken_identifier_token_key"
   ON "VerificationToken"("identifier", "token");
 `);
+
+function ensureColumn(tableName: string, columnName: string, definition: string) {
+  const columns = db
+    .prepare(`PRAGMA table_info("${tableName}")`)
+    .all() as Array<{ name: string }>;
+
+  if (columns.some((column) => column.name === columnName)) {
+    return;
+  }
+
+  db.exec(`ALTER TABLE "${tableName}" ADD COLUMN "${columnName}" ${definition};`);
+}
+
+ensureColumn("ProductImage", "mimeType", "TEXT");
+ensureColumn("ProductImage", "fileName", "TEXT");
+ensureColumn("ProductImage", "data", "BLOB");
 
 db.close();
 

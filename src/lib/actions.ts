@@ -8,7 +8,7 @@ import { signIn, signOut } from "@/lib/auth";
 import { sendOrderConfirmationEmail } from "@/lib/email/send-order-confirmation";
 import { createPaymentSession } from "@/lib/payments";
 import { prisma } from "@/lib/prisma";
-import { cleanupUnusedUploadUrls, moveImagesToProductFolder } from "@/lib/uploads";
+import { cleanupUnusedUploadUrls, prepareProductImagesForDatabase } from "@/lib/uploads";
 import { checkoutSchema, loginSchema, productSchema, registerSchema } from "@/lib/validations";
 import { slugify } from "@/lib/utils";
 
@@ -115,12 +115,7 @@ export async function createProductAction(formData: FormData) {
     slug = `${baseSlug}-${suffix++}`;
   }
 
-  const normalizedImageUrls = await moveImagesToProductFolder(
-    parsed.data.imageUrls,
-    slug,
-  );
-
-  await prisma.product.create({
+  const product = await prisma.product.create({
     data: {
       name: parsed.data.name,
       slug,
@@ -132,15 +127,28 @@ export async function createProductAction(formData: FormData) {
       price: parsed.data.price,
       stock: parsed.data.stock,
       featured: parsed.data.featured,
-      images: {
-        create: normalizedImageUrls.map((url, index) => ({
-          url,
-          alt: parsed.data.name,
-          position: index,
-        })),
-      },
     },
   });
+
+  const preparedImages = await prepareProductImagesForDatabase(
+    parsed.data.imageUrls,
+    parsed.data.name,
+  );
+
+  if (preparedImages.length > 0) {
+    await prisma.productImage.createMany({
+      data: preparedImages.map((image) => ({
+        id: image.id,
+        url: image.url,
+        alt: image.alt,
+        position: image.position,
+        mimeType: image.mimeType,
+        fileName: image.fileName,
+        data: image.data,
+        productId: product.id,
+      })),
+    });
+  }
 
   revalidatePath("/admin/productos");
   revalidatePath("/catalogo");
@@ -167,35 +175,75 @@ export async function updateProductAction(productId: string, formData: FormData)
   const removedUrls = currentProduct.images
     .map((image) => image.url)
     .filter((url) => !nextImageUrls.includes(url));
-
-  const nextSlug = slugify(parsed.data.name);
-  const normalizedImageUrls = await moveImagesToProductFolder(
-    parsed.data.imageUrls,
-    nextSlug,
+  const currentImagesByUrl = new Map(currentProduct.images.map((image) => [image.url, image]));
+  const candidateRetainedUrls = nextImageUrls.filter((url) => currentImagesByUrl.has(url));
+  const retainedImages = candidateRetainedUrls
+    .map((url) => currentImagesByUrl.get(url))
+    .filter((image): image is NonNullable<typeof image> => Boolean(image))
+    .filter((image) => image.url.startsWith("/api/product-images/") || !image.url.startsWith("/"))
+    .map((image) => image)
+    .filter((image): image is NonNullable<typeof image> => Boolean(image));
+  const migratedUrls = candidateRetainedUrls.filter(
+    (url) => url.startsWith("/uploads/") || url.startsWith("/api/upload-assets/"),
   );
+  const newImageUrls = nextImageUrls.filter(
+    (url) => !currentImagesByUrl.has(url) || migratedUrls.includes(url),
+  );
+  const removedImageIds = currentProduct.images
+    .filter((image) => !nextImageUrls.includes(image.url) || migratedUrls.includes(image.url))
+    .map((image) => image.id);
+  const nextSlug = slugify(parsed.data.name);
+  const preparedImages = await prepareProductImagesForDatabase(newImageUrls, parsed.data.name);
 
-  await prisma.product.update({
-    where: { id: productId },
-    data: {
-      name: parsed.data.name,
-      description: parsed.data.description,
-      size: parsed.data.size,
-      gender: parsed.data.gender,
-      category: parsed.data.category,
-      condition: parsed.data.condition as ProductCondition,
-      price: parsed.data.price,
-      stock: parsed.data.stock,
-      featured: parsed.data.featured,
-      slug: nextSlug,
-      images: {
-        deleteMany: {},
-        create: normalizedImageUrls.map((url, index) => ({
-          url,
-          alt: parsed.data.name,
-          position: index,
-        })),
+  await prisma.$transaction(async (transaction) => {
+    await transaction.product.update({
+      where: { id: productId },
+      data: {
+        name: parsed.data.name,
+        description: parsed.data.description,
+        size: parsed.data.size,
+        gender: parsed.data.gender,
+        category: parsed.data.category,
+        condition: parsed.data.condition as ProductCondition,
+        price: parsed.data.price,
+        stock: parsed.data.stock,
+        featured: parsed.data.featured,
+        slug: nextSlug,
       },
-    },
+    });
+
+    if (removedImageIds.length > 0) {
+      await transaction.productImage.deleteMany({
+        where: { id: { in: removedImageIds } },
+      });
+    }
+
+    await Promise.all(
+      retainedImages.map((image, index) =>
+        transaction.productImage.update({
+          where: { id: image.id },
+          data: {
+            alt: parsed.data.name,
+            position: index,
+          },
+        }),
+      ),
+    );
+
+    if (preparedImages.length > 0) {
+      await transaction.productImage.createMany({
+        data: preparedImages.map((image) => ({
+          id: image.id,
+          url: image.url,
+          alt: image.alt,
+          position: image.position + retainedImages.length,
+          mimeType: image.mimeType,
+          fileName: image.fileName,
+          data: image.data,
+          productId,
+        })),
+      });
+    }
   });
 
   await cleanupUnusedUploadUrls(removedUrls);

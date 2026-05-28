@@ -1,7 +1,6 @@
-import { mkdir, writeFile } from "node:fs/promises";
-import path from "node:path";
 import sharp from "sharp";
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 const allowedTypes = new Set([
   "image/jpeg",
@@ -67,9 +66,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No se recibieron archivos." }, { status: 400 });
     }
 
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "_temp");
-    await mkdir(uploadDir, { recursive: true });
-
     const uploaded = await Promise.all(
       files.map(async (file) => {
         if (!allowedTypes.has(file.type)) {
@@ -85,10 +81,18 @@ export async function POST(request: Request) {
         const { buffer, extension } = await normalizeBuffer(file);
         const safeName = sanitizeBaseName(file.name);
         const fileName = `${safeName}-${crypto.randomUUID()}.${extension}`;
+        const asset = await prisma.uploadAsset.create({
+          data: {
+            mimeType: file.type === "image/svg+xml" ? "image/svg+xml" : `image/${extension}`,
+            fileName,
+            data: new Uint8Array(
+              buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer,
+            ) as Uint8Array<ArrayBuffer>,
+          },
+          select: { id: true },
+        });
 
-        await writeFile(path.join(uploadDir, fileName), buffer);
-
-        return `/uploads/_temp/${fileName}`;
+        return `/api/upload-assets/${asset.id}`;
       }),
     );
 
