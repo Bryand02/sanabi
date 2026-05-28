@@ -8,7 +8,7 @@ import { signIn, signOut } from "@/lib/auth";
 import { sendOrderConfirmationEmail } from "@/lib/email/send-order-confirmation";
 import { createPaymentSession } from "@/lib/payments";
 import { prisma } from "@/lib/prisma";
-import { cleanupUnusedUploadUrls } from "@/lib/uploads";
+import { cleanupUnusedUploadUrls, moveImagesToProductFolder } from "@/lib/uploads";
 import { checkoutSchema, loginSchema, productSchema, registerSchema } from "@/lib/validations";
 import { slugify } from "@/lib/utils";
 
@@ -115,6 +115,11 @@ export async function createProductAction(formData: FormData) {
     slug = `${baseSlug}-${suffix++}`;
   }
 
+  const normalizedImageUrls = await moveImagesToProductFolder(
+    parsed.data.imageUrls,
+    slug,
+  );
+
   await prisma.product.create({
     data: {
       name: parsed.data.name,
@@ -128,7 +133,7 @@ export async function createProductAction(formData: FormData) {
       stock: parsed.data.stock,
       featured: parsed.data.featured,
       images: {
-        create: parsed.data.imageUrls.map((url, index) => ({
+        create: normalizedImageUrls.map((url, index) => ({
           url,
           alt: parsed.data.name,
           position: index,
@@ -163,6 +168,12 @@ export async function updateProductAction(productId: string, formData: FormData)
     .map((image) => image.url)
     .filter((url) => !nextImageUrls.includes(url));
 
+  const nextSlug = slugify(parsed.data.name);
+  const normalizedImageUrls = await moveImagesToProductFolder(
+    parsed.data.imageUrls,
+    nextSlug,
+  );
+
   await prisma.product.update({
     where: { id: productId },
     data: {
@@ -175,10 +186,10 @@ export async function updateProductAction(productId: string, formData: FormData)
       price: parsed.data.price,
       stock: parsed.data.stock,
       featured: parsed.data.featured,
-      slug: slugify(parsed.data.name),
+      slug: nextSlug,
       images: {
         deleteMany: {},
-        create: parsed.data.imageUrls.map((url, index) => ({
+        create: normalizedImageUrls.map((url, index) => ({
           url,
           alt: parsed.data.name,
           position: index,
