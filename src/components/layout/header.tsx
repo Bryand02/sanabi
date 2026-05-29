@@ -41,7 +41,7 @@ export async function Header() {
               priority
             />
           </div>
-          <div className="min-w-0">
+          <div className="hidden min-w-0 sm:block">
             <p className="truncate font-display text-xl tracking-[0.01em] text-[var(--color-primary-ink)] sm:text-2xl">
               Sanabi Kids
             </p>

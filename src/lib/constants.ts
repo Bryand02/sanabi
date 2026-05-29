@@ -6,7 +6,7 @@ export const orderStatusLabels = {
   CANCELLED: "Cancelado",
 } as const;
 
-export const appVersion = "1.5";
+export const appVersion = "1.6";
 
 export const conditionLabels = {
   NEW: "Nuevo",
@@ -26,7 +26,7 @@ export const productCategories = [
   "Chaquetas",
   "Pijamas",
   "Overoles",
-  "Bebé",
+  "Bebe",
   "Camisetas",
   "Pantalones",
   "Zapatos",
@@ -46,27 +46,28 @@ export const productSizes = [
   "10",
 ];
 
-export const productGenders = ["Niña", "Niño", "Unisex"];
+export const productGenders = ["Nina", "Nino", "Unisex"];
 
 export const colombiaLocationsByState = {
-  Antioquia: ["Medellín", "Envigado", "Itagüí", "Bello", "Rionegro"],
-  Atlántico: ["Barranquilla", "Soledad", "Puerto Colombia"],
-  "Bogotá D.C.": ["Bogotá"],
-  Bolívar: ["Cartagena", "Turbaco", "Magangué"],
-  Boyacá: ["Tunja", "Duitama", "Sogamoso"],
-  Caldas: ["Manizales", "Villamaría", "La Dorada"],
-  Cauca: ["Popayán", "Santander de Quilichao"],
+  Antioquia: ["Medellin", "Envigado", "Itagui", "Bello", "Rionegro"],
+  Atlantico: ["Barranquilla", "Soledad", "Puerto Colombia"],
+  "Bogota D.C.": ["Bogota"],
+  Bolivar: ["Cartagena", "Turbaco", "Magangue"],
+  Boyaca: ["Tunja", "Duitama", "Sogamoso"],
+  Caldas: ["Manizales", "Villamaria", "La Dorada"],
+  Cauca: ["Popayan", "Santander de Quilichao"],
   Cesar: ["Valledupar", "Aguachica"],
-  Cundinamarca: ["Soacha", "Chía", "Zipaquirá", "Facatativá", "Mosquera"],
+  Cundinamarca: ["Soacha", "Chia", "Zipaquira", "Facatativa", "Mosquera"],
   Huila: ["Neiva", "Pitalito"],
-  Magdalena: ["Santa Marta", "Ciénaga"],
-  Meta: ["Villavicencio", "Acacías"],
-  Nariño: ["Pasto", "Ipiales"],
-  "Norte de Santander": ["Cúcuta", "Ocaña"],
-  Quindío: ["Armenia", "Calarcá"],
+  Magdalena: ["Santa Marta", "Cienaga"],
+  Meta: ["Villavicencio", "Acacias"],
+  Narino: ["Pasto", "Ipiales"],
+  "Norte de Santander": ["Cucuta", "Ocana"],
+  Quindio: ["Armenia", "Calarca"],
   Risaralda: ["Pereira", "Dosquebradas", "Santa Rosa de Cabal"],
-  Santander: ["Bucaramanga", "Floridablanca", "Girón"],
-  Tolima: ["Ibagué", "Espinal"],
+  Santander: ["Bucaramanga", "Floridablanca", "Giron"],
+  Sucre: ["Sincelejo", "Corozal", "Sampues"],
+  Tolima: ["Ibague", "Espinal"],
   "Valle del Cauca": ["Cali", "Palmira", "Buenaventura"],
 } as const;
 
@@ -76,7 +77,7 @@ export const paymentOptions = [
   {
     value: "wompi_pse",
     label: "PSE con Wompi",
-    description: "Base lista para integrar Wompi en producción.",
+    description: "Base lista para integrar Wompi en produccion.",
   },
   {
     value: "mercado_pago_pse",

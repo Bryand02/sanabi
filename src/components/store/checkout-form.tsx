@@ -5,7 +5,7 @@ import { useMemo, useState, useTransition } from "react";
 import { useCart } from "@/components/cart/cart-provider";
 import { colombiaDepartments, colombiaLocationsByState, paymentOptions } from "@/lib/constants";
 import { createOrderAction } from "@/lib/actions";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, getShippingCost } from "@/lib/utils";
 
 export function CheckoutForm({
   userId,
@@ -23,7 +23,7 @@ export function CheckoutForm({
   const [isPending, startTransition] = useTransition();
   const [shippingState, setShippingState] = useState("");
   const [shippingCity, setShippingCity] = useState("");
-  const shipping = totalPrice >= 150000 || totalPrice === 0 ? 0 : 12000;
+  const shipping = getShippingCost(totalPrice, shippingState, shippingCity);
 
   const availableCities = useMemo(
     (): string[] =>
@@ -162,6 +162,11 @@ export function CheckoutForm({
                 </option>
               ))}
             </select>
+            {shippingState === "Sucre" && shippingCity === "Sincelejo" ? (
+              <p className="mt-2 text-xs font-medium text-[var(--color-primary-ink)]">
+                Domicilio en Sincelejo: {formatPrice(6000)}
+              </p>
+            ) : null}
           </div>
           <div className="md:col-span-2">
             <label className="mb-2 block text-sm font-medium text-slate-700">Notas de entrega</label>

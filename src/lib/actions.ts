@@ -12,7 +12,7 @@ import { createPaymentSession } from "@/lib/payments";
 import { prisma } from "@/lib/prisma";
 import { cleanupUnusedUploadUrls, prepareProductImagesForDatabase } from "@/lib/uploads";
 import { checkoutSchema, loginSchema, productSchema, registerSchema } from "@/lib/validations";
-import { slugify } from "@/lib/utils";
+import { getShippingCost, slugify } from "@/lib/utils";
 
 export async function registerUserAction(formData: FormData) {
   const parsed = registerSchema.safeParse({
@@ -367,7 +367,11 @@ export async function createOrderAction(input: unknown, userId: string) {
     (accumulator, item) => accumulator + item.product.price * item.quantity,
     0,
   );
-  const shippingCost = subtotal >= 150000 ? 0 : 12000;
+  const shippingCost = getShippingCost(
+    subtotal,
+    parsed.data.shippingState,
+    parsed.data.shippingCity,
+  );
   const total = subtotal + shippingCost;
   const orderNumber = `SNA-${Date.now().toString().slice(-8)}`;
 
