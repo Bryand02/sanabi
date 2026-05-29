@@ -1,12 +1,13 @@
+import Image from "next/image";
 import Link from "next/link";
-import { HeartHandshake, LayoutDashboard, ShoppingBag } from "lucide-react";
+import { LayoutDashboard, ShoppingBag } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { AdminNotificationCenter } from "@/components/admin/admin-notification-center";
 import { CartBadge } from "@/components/cart/cart-badge";
 import { MobileMenu } from "@/components/layout/mobile-menu";
 import { getAdminNotificationCenter } from "@/lib/data/store";
-import { getPublicVapidKey } from "@/lib/notifications";
+import { getPublicVapidKey, pushNotificationsConfigured } from "@/lib/notifications";
 
 type NotificationCenterItem = {
   id: string;
@@ -30,11 +31,18 @@ export async function Header() {
     <header className="sticky top-0 z-30 border-b border-white/70 bg-white/85 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="min-w-0 flex items-center gap-3">
-          <div className="flex h-13 w-13 shrink-0 items-center justify-center rounded-[1.35rem] bg-[linear-gradient(180deg,var(--color-accent),#ffc29c)] shadow-[0_12px_30px_rgba(255,193,139,0.4)]">
-            <HeartHandshake className="h-6 w-6 text-[var(--color-primary-ink)]" />
+          <div className="relative h-16 w-36 shrink-0 overflow-hidden rounded-[1.4rem] border border-white/80 bg-white shadow-[0_12px_30px_rgba(255,193,139,0.22)] sm:h-18 sm:w-40">
+            <Image
+              src="/brand/sanabi-kids-logo.jpeg"
+              alt="Logo de Sanabi Kids"
+              fill
+              sizes="(max-width: 640px) 144px, 160px"
+              className="object-cover"
+              priority
+            />
           </div>
           <div className="min-w-0">
-            <p className="truncate font-display text-2xl tracking-[0.01em] text-[var(--color-primary-ink)]">
+            <p className="truncate font-display text-xl tracking-[0.01em] text-[var(--color-primary-ink)] sm:text-2xl">
               Sanabi Kids
             </p>
             <p className="line-clamp-2 text-xs font-medium text-slate-500">
@@ -68,6 +76,7 @@ export async function Header() {
               }))}
               initialUnreadCount={notificationCenter.unreadCount}
               vapidPublicKey={getPublicVapidKey()}
+              pushConfigured={pushNotificationsConfigured()}
             />
           ) : null}
 

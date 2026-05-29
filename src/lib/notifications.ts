@@ -1,3 +1,4 @@
+import type { PushSubscription } from "@prisma/client";
 import webpush from "web-push";
 import { prisma } from "@/lib/prisma";
 
@@ -21,6 +22,47 @@ export function pushNotificationsConfigured() {
 
 export function getPublicVapidKey() {
   return process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? "";
+}
+
+export async function sendPushToSubscriptions(
+  subscriptions: Pick<PushSubscription, "id" | "endpoint" | "p256dh" | "auth">[],
+  payload: PushPayload,
+) {
+  if (!pushNotificationsConfigured() || subscriptions.length === 0) {
+    return { sent: 0 };
+  }
+
+  const serializedPayload = JSON.stringify(payload satisfies PushPayload);
+  let sent = 0;
+
+  await Promise.all(
+    subscriptions.map(async (subscription) => {
+      try {
+        await webpush.sendNotification(
+          {
+            endpoint: subscription.endpoint,
+            keys: {
+              p256dh: subscription.p256dh,
+              auth: subscription.auth,
+            },
+          },
+          serializedPayload,
+        );
+        sent += 1;
+      } catch (error) {
+        if (
+          typeof error === "object" &&
+          error !== null &&
+          "statusCode" in error &&
+          (error.statusCode === 404 || error.statusCode === 410)
+        ) {
+          await prisma.pushSubscription.delete({ where: { id: subscription.id } });
+        }
+      }
+    }),
+  );
+
+  return { sent };
 }
 
 export async function createAdminOrderNotifications(input: {
@@ -57,37 +99,8 @@ export async function createAdminOrderNotifications(input: {
     })),
   });
 
-  if (!pushNotificationsConfigured()) {
-    return;
-  }
-
-  const payload = JSON.stringify({ title, body, href } satisfies PushPayload);
-
-  await Promise.all(
-    admins.flatMap((admin) =>
-      admin.pushSubscriptions.map(async (subscription) => {
-        try {
-          await webpush.sendNotification(
-            {
-              endpoint: subscription.endpoint,
-              keys: {
-                p256dh: subscription.p256dh,
-                auth: subscription.auth,
-              },
-            },
-            payload,
-          );
-        } catch (error) {
-          if (
-            typeof error === "object" &&
-            error !== null &&
-            "statusCode" in error &&
-            (error.statusCode === 404 || error.statusCode === 410)
-          ) {
-            await prisma.pushSubscription.delete({ where: { id: subscription.id } });
-          }
-        }
-      }),
-    ),
+  await sendPushToSubscriptions(
+    admins.flatMap((admin) => admin.pushSubscriptions),
+    { title, body, href },
   );
 }

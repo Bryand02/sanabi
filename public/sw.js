@@ -15,8 +15,8 @@ self.addEventListener("push", (event) => {
   const title = payload.title || "Sanabi Kids";
   const options = {
     body: payload.body,
-    icon: "/favicon.ico",
-    badge: "/favicon.ico",
+    icon: "/brand/icon-192.png",
+    badge: "/brand/icon-64.png",
     data: {
       href: payload.href || "/admin/pedidos",
     },

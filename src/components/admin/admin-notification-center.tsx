@@ -7,6 +7,7 @@ import {
   CheckCheck,
   Download,
   LoaderCircle,
+  Send,
   ShieldAlert,
   Smartphone,
   X,
@@ -49,17 +50,19 @@ function formatDate(value: string) {
 
 function getDeviceHelpMessage({
   isSupported,
-  vapidPublicKey,
+  hasPublicKey,
+  pushConfigured,
   isIos,
   isStandalone,
 }: {
   isSupported: boolean;
-  vapidPublicKey: string;
+  hasPublicKey: boolean;
+  pushConfigured: boolean;
   isIos: boolean;
   isStandalone: boolean;
 }) {
-  if (!vapidPublicKey) {
-    return "Las notificaciones aún no están configuradas en el servidor.";
+  if (!hasPublicKey || !pushConfigured) {
+    return "Las notificaciones aún no están configuradas completamente en el servidor.";
   }
 
   if (isIos && !isStandalone) {
@@ -70,17 +73,19 @@ function getDeviceHelpMessage({
     return "Este navegador todavía no permite activar notificaciones push en este dispositivo.";
   }
 
-  return "Activa las alertas para recibir compras nuevas en este dispositivo administrador.";
+  return "Activa las alertas y luego usa la prueba para confirmar que este celular administrador sí recibe notificaciones.";
 }
 
 export function AdminNotificationCenter({
   initialNotifications,
   initialUnreadCount,
   vapidPublicKey,
+  pushConfigured,
 }: {
   initialNotifications: NotificationItem[];
   initialUnreadCount: number;
   vapidPublicKey: string;
+  pushConfigured: boolean;
 }) {
   const supported =
     typeof window !== "undefined" &&
@@ -93,6 +98,7 @@ export function AdminNotificationCenter({
   const [isSupported] = useState(supported);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
+  const [isTesting, setIsTesting] = useState(false);
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [statusMessage, setStatusMessage] = useState("");
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -104,10 +110,11 @@ export function AdminNotificationCenter({
     (window.matchMedia("(display-mode: standalone)").matches ||
       ("standalone" in window.navigator &&
         Boolean((window.navigator as Navigator & { standalone?: boolean }).standalone)));
+  const hasPublicKey = Boolean(vapidPublicKey);
 
   const canInstall = useMemo(() => Boolean(installPrompt), [installPrompt]);
   const canEnableNotifications = useMemo(() => {
-    if (!vapidPublicKey || !isSupported) {
+    if (!hasPublicKey || !pushConfigured || !isSupported) {
       return false;
     }
 
@@ -116,16 +123,17 @@ export function AdminNotificationCenter({
     }
 
     return true;
-  }, [isIos, isStandalone, isSupported, vapidPublicKey]);
+  }, [hasPublicKey, isIos, isStandalone, isSupported, pushConfigured]);
   const helpMessage = useMemo(
     () =>
       getDeviceHelpMessage({
         isSupported,
-        vapidPublicKey,
+        hasPublicKey,
+        pushConfigured,
         isIos,
         isStandalone,
       }),
-    [isIos, isStandalone, isSupported, vapidPublicKey],
+    [hasPublicKey, isIos, isStandalone, isSupported, pushConfigured],
   );
 
   useEffect(() => {
@@ -230,14 +238,21 @@ export function AdminNotificationCenter({
         body: JSON.stringify(subscription),
       });
 
+      const result = (await response.json().catch(() => null)) as { error?: string } | null;
+
       if (!response.ok) {
-        throw new Error("subscription_failed");
+        throw new Error(result?.error ?? "subscription_failed");
       }
 
       setIsSubscribed(true);
       setStatusMessage("Notificaciones activadas para este dispositivo administrador.");
-    } catch {
-      setStatusMessage("No fue posible activar las notificaciones. Revisa permisos, instalación de la app y configuración del servidor.");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      if (message.includes("server")) {
+        setStatusMessage("El servidor todavía no está listo para enviar push. Revisa las llaves VAPID en producción.");
+      } else {
+        setStatusMessage("No fue posible activar las notificaciones. Revisa permisos, instalación de la app y configuración del servidor.");
+      }
     } finally {
       setIsBusy(false);
     }
@@ -273,10 +288,40 @@ export function AdminNotificationCenter({
     }
   }
 
+  async function sendTestNotification() {
+    setIsTesting(true);
+
+    try {
+      const response = await fetch("/api/push-test", { method: "POST" });
+      const result = (await response.json().catch(() => null)) as
+        | { success?: boolean; sent?: number; error?: string }
+        | null;
+
+      if (!response.ok) {
+        throw new Error(result?.error ?? "test_failed");
+      }
+
+      setStatusMessage(
+        result?.sent
+          ? `Prueba enviada a ${result.sent} dispositivo${result.sent === 1 ? "" : "s"} del administrador.`
+          : "Prueba enviada.",
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      setStatusMessage(
+        message || "No fue posible enviar la prueba. Activa primero las notificaciones en este celular.",
+      );
+    } finally {
+      setIsTesting(false);
+    }
+  }
+
   async function installApp() {
     if (!installPrompt) {
       if (isIos) {
         setStatusMessage("En iPhone abre Compartir y elige “Agregar a pantalla de inicio” para instalar Sanabi Kids.");
+      } else {
+        setStatusMessage("Si el navegador no muestra instalación automática, abre el menú del navegador y busca la opción Instalar app.");
       }
       return;
     }
@@ -343,27 +388,43 @@ export function AdminNotificationCenter({
 
             <div className="flex-1 overflow-y-auto px-4 py-4 md:px-5">
               <div className="rounded-[1.4rem] bg-slate-50 p-4">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-col gap-4">
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-slate-900">Alertas en este dispositivo</p>
                     <p className="mt-1 text-sm text-slate-500">{helpMessage}</p>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={isSubscribed ? disableNotifications : enableNotifications}
-                    disabled={isBusy || (!isSubscribed && !canEnableNotifications)}
-                    className="inline-flex min-h-11 min-w-32 items-center justify-center gap-2 rounded-full bg-[var(--color-primary-ink)] px-5 py-3 text-sm font-semibold text-white disabled:bg-slate-300"
-                  >
-                    {isBusy ? (
-                      <LoaderCircle className="h-4 w-4 animate-spin" />
-                    ) : isSubscribed ? (
-                      <BellOff className="h-4 w-4" />
-                    ) : (
-                      <Bell className="h-4 w-4" />
-                    )}
-                    {isSubscribed ? "Desactivar" : "Activar"}
-                  </button>
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <button
+                      type="button"
+                      onClick={isSubscribed ? disableNotifications : enableNotifications}
+                      disabled={isBusy || (!isSubscribed && !canEnableNotifications)}
+                      className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full bg-[var(--color-primary-ink)] px-5 py-3 text-sm font-semibold text-white disabled:bg-slate-300"
+                    >
+                      {isBusy ? (
+                        <LoaderCircle className="h-4 w-4 animate-spin" />
+                      ) : isSubscribed ? (
+                        <BellOff className="h-4 w-4" />
+                      ) : (
+                        <Bell className="h-4 w-4" />
+                      )}
+                      {isSubscribed ? "Desactivar" : "Activar"}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={sendTestNotification}
+                      disabled={isTesting || !isSubscribed || !pushConfigured}
+                      className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 disabled:bg-slate-100 disabled:text-slate-400"
+                    >
+                      {isTesting ? (
+                        <LoaderCircle className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Send className="h-4 w-4" />
+                      )}
+                      Enviar prueba
+                    </button>
+                  </div>
                 </div>
 
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -373,12 +434,18 @@ export function AdminNotificationCenter({
                     className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700"
                   >
                     {isIos ? <Smartphone className="h-4 w-4" /> : <Download className="h-4 w-4" />}
-                    {canInstall ? "Instalar app" : isIos ? "Guía para iPhone" : "Instalación disponible"}
+                    {canInstall ? "Instalar app" : isIos ? "Guía para iPhone" : "Cómo instalar"}
                   </button>
 
                   {isSubscribed ? (
                     <span className="inline-flex items-center rounded-full bg-[var(--color-mint)] px-3 py-2 text-xs font-semibold text-[var(--color-primary-ink)]">
                       Activo en este dispositivo
+                    </span>
+                  ) : null}
+
+                  {!pushConfigured ? (
+                    <span className="inline-flex items-center rounded-full bg-[var(--color-accent-soft)] px-3 py-2 text-xs font-semibold text-[var(--color-primary-ink)]">
+                      Falta configuración del servidor
                     </span>
                   ) : null}
                 </div>

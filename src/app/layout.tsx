@@ -22,6 +22,20 @@ export const metadata: Metadata = {
   description:
     "Sanabi Kids es una tienda online de moda infantil nueva y de segunda mano con pagos, envíos y panel administrativo.",
   manifest: "/manifest.webmanifest",
+  applicationName: "Sanabi Kids",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Sanabi Kids",
+  },
+  icons: {
+    icon: [
+      { url: "/brand/icon-64.png", sizes: "64x64", type: "image/png" },
+      { url: "/brand/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/brand/icon-180.png", sizes: "180x180", type: "image/png" }],
+    shortcut: ["/brand/icon-64.png"],
+  },
 };
 
 export default function RootLayout({
