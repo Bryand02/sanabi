@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { pushNotificationsConfigured } from "@/lib/notifications";
 import { prisma } from "@/lib/prisma";
 
 type PushSubscriptionBody = {
@@ -16,6 +17,13 @@ export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user || session.user.role !== "ADMIN") {
     return NextResponse.json({ error: "No autorizado." }, { status: 401 });
+  }
+
+  if (!pushNotificationsConfigured()) {
+    return NextResponse.json(
+      { error: "El servidor todavía no tiene habilitadas las llaves push." },
+      { status: 400 },
+    );
   }
 
   const body = (await request.json()) as PushSubscriptionBody;

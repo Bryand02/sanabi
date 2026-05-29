@@ -6,7 +6,7 @@ export const orderStatusLabels = {
   CANCELLED: "Cancelado",
 } as const;
 
-export const appVersion = "1.4";
+export const appVersion = "1.5";
 
 export const conditionLabels = {
   NEW: "Nuevo",
